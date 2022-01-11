@@ -18,9 +18,45 @@ namespace svg {
         shape *duplicate() const override;
     };
 
+    //###### CIRLCE #################
     class circle: public ellipse{
     public:
         circle(const svg::color &fill, const point &center, const point &radius);
+        void draw(png_image &img) const override;
+    };
+
+    //###### POLYGON #################
+    class polygon : public shape{
+    protected:
+        std::vector<point> pontos;
+
+    public:
+        polygon(const svg::color &color,const std::vector<point> &ponto);
+        void draw(png_image &img) const override;
+
+    };
+
+    //###### Rect #################
+
+    class rect : public polygon{
+    public:
+        rect(const svg::color &color,const std::vector<point> &ponto);
+        void draw(png_image &img) const override;
+    };
+
+    //###### POLYLINE #################
+    class polyline : public shape{
+    protected:
+        std::vector<point> points;
+    public:
+        polyline(const svg::color &color,const std::vector<point> &ponto);
+        void draw(png_image &img) const override;
+    };
+
+    //###### LINE #################
+    class line : public polyline{
+    public:
+        line(const svg::color &color,const std::vector<point> &ponto);
         void draw(png_image &img) const override;
     };
 

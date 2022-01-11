@@ -101,9 +101,42 @@ namespace svg {
         int cx=elem->IntAttribute("cx");
         int cy = elem->IntAttribute("cy");
         int r = elem->IntAttribute("r");
-        //int ry = elem->IntAttribute("ry");
         color fill = parse_color(elem->Attribute("fill"));
         return new circle(fill, {cx, cy}, {r, r});
+    }
+    polygon *parse_polygon(XMLElement *elem){
+        std::vector<point> points;
+        parse_points(elem->Attribute("points"),  points);
+        color fill= parse_color(elem->Attribute("fill"));
+        return new polygon(fill,points);
+    }
+    rect *parse_rect(XMLElement *elem){
+        int x=elem->IntAttribute("x");
+        int y=elem->IntAttribute("y");
+        int width=elem->IntAttribute("width");
+        int height=elem->IntAttribute("height");
+        color fill= parse_color(elem->Attribute("fill"));
+    }
+
+
+    polyline *parse_polyline(XMLElement *elem){
+        std::vector<point> points;
+        parse_points(elem->Attribute("points"),  points);
+        color stroke= parse_color(elem->Attribute("stroke"));
+        return new polyline(stroke,points);
+    }
+
+
+    line *parse_line(XMLElement *elem){
+        int x1=elem->IntAttribute("x1");
+        int y1=elem->IntAttribute("y1");
+        int x2=elem->IntAttribute("x2");
+        int y2=elem->IntAttribute("y2");
+        color stroke= parse_color(elem->Attribute("stroke"));
+        std::vector<point> points;
+        points.push_back({x1,y1});
+        points.push_back({x2,y2});
+        return new line(stroke,points);
     }
     // Loop for parsing shapes
     void parse_shapes(XMLElement *elem, std::vector<shape *> &shapes) {
@@ -118,6 +151,18 @@ namespace svg {
             }
             else if(type=="circle"){
                 s = parse_circle(child_elem);
+            }
+            else if(type=="polygon"){
+                s = parse_polygon(child_elem);
+            }
+            else if(type=="rect"){
+                //
+            }
+            else if(type=="polyline"){
+                s= parse_polyline(child_elem);
+            }
+            else if(type=="line"){
+                s=parse_line(child_elem);
             }
             else {
                 std::cout << "Unrecognized shape type: " << type << std::endl;
