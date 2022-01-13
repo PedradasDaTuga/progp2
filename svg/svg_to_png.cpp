@@ -116,6 +116,14 @@ namespace svg {
         int width=elem->IntAttribute("width");
         int height=elem->IntAttribute("height");
         color fill= parse_color(elem->Attribute("fill"));
+        std::vector<point> points;
+       points.push_back({x,y});
+        points.push_back({x+width-1,y});
+        points.push_back({x+width-1,y+height-1});
+        points.push_back({x,y+height-1});
+
+
+        return new rect(fill,points);
     }
 
 
@@ -138,6 +146,22 @@ namespace svg {
         points.push_back({x2,y2});
         return new line(stroke,points);
     }
+
+    group *parse_group(XMLElement *elem, std::vector<shape *> &shapes) {
+        /*  auto child_elem = elem->FirstChildElement();
+              if(elem->NextSiblingElement()==NULL)
+                  parse_shapes(&child_elem,shapes);
+              else*/
+                  return new group({235, 215, 155}, shapes);
+
+            /*  if (child_elem->NextSiblingElement()!= NULL) {
+              parse_group(child_elem->NextSiblingElement(), shapes);
+          }else */
+
+       // return new group({255, 255, 255}, shapes);
+
+    }
+
     // Loop for parsing shapes
     void parse_shapes(XMLElement *elem, std::vector<shape *> &shapes) {
         for (auto child_elem = elem->FirstChildElement();
@@ -156,13 +180,18 @@ namespace svg {
                 s = parse_polygon(child_elem);
             }
             else if(type=="rect"){
-                //
+                s= parse_rect(child_elem);
             }
             else if(type=="polyline"){
                 s= parse_polyline(child_elem);
             }
             else if(type=="line"){
                 s=parse_line(child_elem);
+            }
+            else if(type=="g"){
+                s= parse_group(child_elem,shapes);
+                parse_shapes(child_elem,shapes);
+
             }
             else {
                 std::cout << "Unrecognized shape type: " << type << std::endl;

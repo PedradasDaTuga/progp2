@@ -23,6 +23,9 @@ namespace svg {
     public:
         circle(const svg::color &fill, const point &center, const point &radius);
         void draw(png_image &img) const override;
+        void translate(const point &t) override;
+        void scale(const point &origin, int v) override;
+        void rotate(const point &origin, int v) override;
     };
 
     //###### POLYGON #################
@@ -33,6 +36,9 @@ namespace svg {
     public:
         polygon(const svg::color &color,const std::vector<point> &ponto);
         void draw(png_image &img) const override;
+        void translate(const point &t) override;
+        void scale(const point &origin, int v) override;
+        void rotate(const point &origin, int degrees) override;
 
     };
 
@@ -42,6 +48,9 @@ namespace svg {
     public:
         rect(const svg::color &color,const std::vector<point> &ponto);
         void draw(png_image &img) const override;
+        void translate(const point &t) override;
+        void scale(const point &origin, int v) override;
+        void rotate(const point &origin, int degrees) override;
     };
 
     //###### POLYLINE #################
@@ -51,6 +60,9 @@ namespace svg {
     public:
         polyline(const svg::color &color,const std::vector<point> &ponto);
         void draw(png_image &img) const override;
+       void translate(const point &t) override;
+        void scale(const point &origin, int v) override;
+        void rotate(const point &origin, int degrees) override;
     };
 
     //###### LINE #################
@@ -58,6 +70,22 @@ namespace svg {
     public:
         line(const svg::color &color,const std::vector<point> &ponto);
         void draw(png_image &img) const override;
+        void translate(const point &t) override;
+        void scale(const point &origin, int v) override;
+        void rotate(const point &origin, int degrees) override;
+    };
+
+    //####### GROUP ########
+    class group:public shape{
+    protected:
+        std::vector<shape *> g;
+    public:
+        group(const svg::color &fill, std::vector<shape *> shapes);
+      //  ~group();
+        void draw(png_image &img) const override;
+        void translate(const point &t) override;
+        void scale(const point &origin, int v) override;
+        void rotate(const point &origin, int degrees) override;
     };
 
 }
