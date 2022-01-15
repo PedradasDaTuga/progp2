@@ -147,23 +147,15 @@ namespace svg {
         return new line(stroke,points);
     }
 
-    group *parse_group(XMLElement *elem, std::vector<shape *> &shapes) {
-        /*  auto child_elem = elem->FirstChildElement();
-              if(elem->NextSiblingElement()==NULL)
-                  parse_shapes(&child_elem,shapes);
-              else*/
-                  return new group({235, 215, 155}, shapes);
-
-            /*  if (child_elem->NextSiblingElement()!= NULL) {
-              parse_group(child_elem->NextSiblingElement(), shapes);
-          }else */
-
-       // return new group({255, 255, 255}, shapes);
-
-    }
-
+    group *parse_group(XMLElement *elem, std::vector<shape *> &shapes);
     // Loop for parsing shapes
     void parse_shapes(XMLElement *elem, std::vector<shape *> &shapes) {
+        if(elem->FirstChildElement()==NULL){
+            std::cout<<" First Child ELEM É NULL "<<std::endl;
+        }
+        if(elem==NULL){
+            std::cout<<"ELEM É NULL "<<std::endl;
+        }
         for (auto child_elem = elem->FirstChildElement();
              child_elem != NULL;
              child_elem = child_elem->NextSiblingElement()) {
@@ -172,34 +164,60 @@ namespace svg {
             // TODO complete
             if (type == "ellipse") {
                 s = parse_ellipse(child_elem);
+                std::cout<<" elipse "<<std::endl;
+
             }
             else if(type=="circle"){
                 s = parse_circle(child_elem);
+                std::cout<<"circle "<<std::endl;
+
             }
             else if(type=="polygon"){
                 s = parse_polygon(child_elem);
+                std::cout<<"polygon :"<<std::endl;
             }
             else if(type=="rect"){
                 s= parse_rect(child_elem);
+                std::cout<<" rect "<<std::endl;
             }
             else if(type=="polyline"){
                 s= parse_polyline(child_elem);
+                std::cout<<" polyline "<<std::endl;
             }
             else if(type=="line"){
                 s=parse_line(child_elem);
+                std::cout<<"line "<<std::endl;
+
             }
             else if(type=="g"){
+                std::cout<<"g"<<std::endl;
                 s= parse_group(child_elem,shapes);
-                parse_shapes(child_elem,shapes);
+                std::cout<<"/g"<<std::endl;
 
             }
             else {
                 std::cout << "Unrecognized shape type: " << type << std::endl;
                 continue;
             }
+            std::cout<<"Antes Transform\n";
             parse_transform(s, child_elem);
+            std::cout<<"Depois Transform\n";
             shapes.push_back(s);
+            std::cout<<"Depois Push_back\n";
         }
+    }
+    group *parse_group(XMLElement *elem, std::vector<shape *> &shapes) {
+        if(elem->FirstChildElement()== NULL){
+            std::cout<<"NULL\n";
+           // parse_shapes(elem,shapes);
+            return new group({235, 215, 155}, shapes);
+        }
+        else{
+            std::cout<<"ELSE\n";
+            parse_shapes(elem->FirstChildElement(),shapes);
+            return new group({235, 215, 155}, shapes);
+        }
+
     }
 
     // Main conversion function.

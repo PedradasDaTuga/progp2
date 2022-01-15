@@ -81,7 +81,7 @@ namespace svg {
         std::vector<shape *> g;
     public:
         group(const svg::color &fill, std::vector<shape *> shapes);
-      //  ~group();
+        ~group();
         void draw(png_image &img) const override;
         void translate(const point &t) override;
         void scale(const point &origin, int v) override;

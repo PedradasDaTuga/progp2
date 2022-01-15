@@ -74,12 +74,9 @@ namespace svg {
         img.draw_polygon(pontos,get_color());
     }
     void rect::translate(const point &t) {
-        for (auto &itr:pontos){
-            itr=itr.translate(t);
-        }
+        polygon::translate(t);
     }
     void rect::scale(const point &origin, int v) {
-        //Podemos fazer como tá em baixo que é chamar a função já existente na class polygon ou o for ()
         polygon::scale(origin,v);
     }
     void rect::rotate(const point &origin, int degrees) {
@@ -89,7 +86,7 @@ namespace svg {
     //###### POLYLINE #################
     polyline::polyline(const svg::color &color, const std::vector<point> &ponto):shape(color),points(ponto) {}
     void polyline::draw(png_image &img) const {
-        for(int i=0;i<points.size()-1;i++)
+        for(int i=0;i<(points.size()-1);i++)
             img.draw_line(points.at(i),points.at(i+1),get_color());
     }
     void polyline::translate(const point &t) {
@@ -116,9 +113,7 @@ namespace svg {
         img.draw_line(points.at(0),points.at(1),get_color());
     }
     void line::translate(const point &t) {
-        for (auto &itr:points){
-            itr=itr.translate(t);
-        }
+        polyline::translate(t);
     }
     void line::scale(const point &origin, int v) {
         polyline::scale(origin,v);
@@ -132,9 +127,9 @@ namespace svg {
     group::group(const svg::color &fill, std::vector<shape *> shapes) : shape(fill), g(shapes){
 
     }
-  /*  group::~group() noexcept {
+    group::~group() noexcept {
         g.clear();
-    } */
+    }
     void group::draw(png_image &img) const {
         for(auto &itr : g)
             itr->draw(img);
@@ -146,7 +141,6 @@ namespace svg {
     void group::scale(const point &origin, int v) {
         for(auto &itr : g)
             itr->scale(origin,v);
-
     }
     void group::rotate(const point &origin, int degrees) {
         for(auto &itr : g)
