@@ -150,11 +150,12 @@ namespace svg {
     group *parse_group(XMLElement *elem, std::vector<shape *> &shapes);
     // Loop for parsing shapes
     void parse_shapes(XMLElement *elem, std::vector<shape *> &shapes) {
+        int cont=0;
         if(elem->FirstChildElement()==NULL){
             std::cout<<" First Child ELEM É NULL "<<std::endl;
         }
-        if(elem==NULL){
-            std::cout<<"ELEM É NULL "<<std::endl;
+        if(elem->NextSiblingElement()==NULL){
+            std::cout<<"Next ELEM É NULL "<<std::endl;
         }
         for (auto child_elem = elem->FirstChildElement();
              child_elem != NULL;
@@ -190,34 +191,49 @@ namespace svg {
 
             }
             else if(type=="g"){
+             //   std::cout<<cont<<std::endl;
                 std::cout<<"g"<<std::endl;
                 s= parse_group(child_elem,shapes);
                 std::cout<<"/g"<<std::endl;
+               // cont++;
+                //std::cout<<cont<<std::endl;
 
             }
             else {
                 std::cout << "Unrecognized shape type: " << type << std::endl;
                 continue;
             }
-            std::cout<<"Antes Transform\n";
+           // std::cout<<"Antes Transform\n";
             parse_transform(s, child_elem);
-            std::cout<<"Depois Transform\n";
+          //  std::cout<<"Depois Transform\n";
             shapes.push_back(s);
-            std::cout<<"Depois Push_back\n";
+         //   std::cout<<"Depois Push_back\n";
         }
     }
     group *parse_group(XMLElement *elem, std::vector<shape *> &shapes) {
         if(elem->FirstChildElement()== NULL){
             std::cout<<"NULL\n";
-           // parse_shapes(elem,shapes);
-            return new group({235, 215, 155}, shapes);
+            if(elem->NextSiblingElement()->FirstChildElement()==NULL){
+                std::cout<<"NULL 2 \n";
+                parse_shapes(elem,shapes);
+            }
+            else{
+                std::cout<<"NULL 3 \n";
+                parse_shapes(elem->NextSiblingElement(),shapes);
+            }
         }
         else{
-            std::cout<<"ELSE\n";
-            parse_shapes(elem->FirstChildElement(),shapes);
-            return new group({235, 215, 155}, shapes);
+            std::cout<<"ELSE1\n";
+            if(elem->FirstChildElement()->FirstChildElement()==NULL){
+                std::cout<<"Else 2\n";
+                parse_shapes(elem,shapes);
+            }
+            else {
+                std::cout<<"Else 3\n";
+                parse_shapes(elem,shapes);
+            }
         }
-
+        return new group({235, 215, 155}, shapes);
     }
 
     // Main conversion function.
