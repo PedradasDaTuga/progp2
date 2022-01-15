@@ -224,14 +224,8 @@ namespace svg {
         }
         else{
             std::cout<<"ELSE1\n";
-            if(elem->FirstChildElement()->FirstChildElement()==NULL){
-                std::cout<<"Else 2\n";
-                parse_shapes(elem,shapes);
-            }
-            else {
-                std::cout<<"Else 3\n";
-                parse_shapes(elem,shapes);
-            }
+     
+      parse_shapes(elem,shapes);
         }
         return new group({235, 215, 155}, shapes);
     }
