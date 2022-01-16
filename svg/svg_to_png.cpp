@@ -211,23 +211,9 @@ namespace svg {
         }
     }
     group *parse_group(XMLElement *elem, std::vector<shape *> &shapes) {
-        if(elem->FirstChildElement()== NULL){
-            std::cout<<"NULL\n";
-            if(elem->NextSiblingElement()->FirstChildElement()==NULL){
-                std::cout<<"NULL 2 \n";
-                parse_shapes(elem,shapes);
-            }
-            else{
-                std::cout<<"NULL 3 \n";
-                parse_shapes(elem->NextSiblingElement(),shapes);
-            }
-        }
-        else{
-            std::cout<<"ELSE1\n";
-     
-      parse_shapes(elem,shapes);
-        }
-        return new group({235, 215, 155}, shapes);
+        std::vector<shape*> group_shapes;
+        parse_shapes(elem,group_shapes);
+        return new group({244,244,244},group_shapes);
     }
 
     // Main conversion function.

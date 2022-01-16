@@ -128,7 +128,8 @@ namespace svg {
 
     }
     group::~group() noexcept {
-        g.clear();
+        for(auto s :g)
+            delete s;
     }
     void group::draw(png_image &img) const {
         for(auto &itr : g)
