@@ -26,6 +26,7 @@ namespace svg {
         void translate(const point &t) override;
         void scale(const point &origin, int v) override;
         void rotate(const point &origin, int v) override;
+        shape *duplicate() const override;
     };
 
     //###### POLYGON #################
@@ -39,7 +40,7 @@ namespace svg {
         void translate(const point &t) override;
         void scale(const point &origin, int v) override;
         void rotate(const point &origin, int degrees) override;
-
+        shape *duplicate() const override;
     };
 
     //###### Rect #################
@@ -51,6 +52,7 @@ namespace svg {
         void translate(const point &t) override;
         void scale(const point &origin, int v) override;
         void rotate(const point &origin, int degrees) override;
+        shape *duplicate() const override;
     };
 
     //###### POLYLINE #################
@@ -63,6 +65,7 @@ namespace svg {
        void translate(const point &t) override;
         void scale(const point &origin, int v) override;
         void rotate(const point &origin, int degrees) override;
+        shape *duplicate() const override;
     };
 
     //###### LINE #################
@@ -73,6 +76,7 @@ namespace svg {
         void translate(const point &t) override;
         void scale(const point &origin, int v) override;
         void rotate(const point &origin, int degrees) override;
+        shape *duplicate() const override;
     };
 
     //####### GROUP ########
@@ -86,7 +90,10 @@ namespace svg {
         void translate(const point &t) override;
         void scale(const point &origin, int v) override;
         void rotate(const point &origin, int degrees) override;
+        shape *duplicate() const override;
     };
+
+
 
 }
 #endif

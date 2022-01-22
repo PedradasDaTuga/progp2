@@ -8,6 +8,7 @@
 using namespace tinyxml2;
 
 namespace svg {
+
     // Color parsing
     const std::map<std::string, color> COLORS = {
             {"black",  {0,   0,   0}},
@@ -147,16 +148,31 @@ namespace svg {
         return new line(stroke,points);
     }
 
-    group *parse_group(XMLElement *elem, std::vector<shape *> &shapes);
-    // Loop for parsing shapes
-    void parse_shapes(XMLElement *elem, std::vector<shape *> &shapes) {
+    group *parse_group(XMLElement *elem,std::map<std::string ,shape*> &map);
+
+    shape* parse_use(XMLElement *elem,std::map<std::string ,shape*> &map){
+        std::string id;
+        std::string href;
         int cont=0;
-        if(elem->FirstChildElement()==NULL){
-            std::cout<<" First Child ELEM É NULL "<<std::endl;
+        shape* temp;
+        if(elem->Attribute("id")){
+            cont=1;
+            id=elem->Attribute("id");
         }
-        if(elem->NextSiblingElement()==NULL){
-            std::cout<<"Next ELEM É NULL "<<std::endl;
-        }
+        href=elem->Attribute("href");
+
+        temp=map.at(href)->duplicate();
+
+        if(cont==1)
+            map.insert({"#"+id,temp});
+
+        return temp;
+
+    }
+    // Loop for parsing shapes
+    void parse_shapes(XMLElement *elem, std::vector<shape *> &shapes,std::map<std::string ,shape*> &map) {
+
+        std::string id;
         for (auto child_elem = elem->FirstChildElement();
              child_elem != NULL;
              child_elem = child_elem->NextSiblingElement()) {
@@ -165,54 +181,65 @@ namespace svg {
             // TODO complete
             if (type == "ellipse") {
                 s = parse_ellipse(child_elem);
-                std::cout<<" elipse "<<std::endl;
-
             }
             else if(type=="circle"){
+                if(child_elem->Attribute("id"))
+                     id=child_elem->Attribute("id");
                 s = parse_circle(child_elem);
-                std::cout<<"circle "<<std::endl;
+                map.insert({"#"+id,s});
 
             }
             else if(type=="polygon"){
+                if(child_elem->Attribute("id"))
+                    id=child_elem->Attribute("id");
                 s = parse_polygon(child_elem);
-                std::cout<<"polygon :"<<std::endl;
+                map.insert({"#"+id,s});
             }
             else if(type=="rect"){
+                if(child_elem->Attribute("id"))
+                    id=child_elem->Attribute("id");
                 s= parse_rect(child_elem);
-                std::cout<<" rect "<<std::endl;
+                map.insert({"#"+id,s});
             }
             else if(type=="polyline"){
+                if(child_elem->Attribute("id"))
+                    id=child_elem->Attribute("id");
                 s= parse_polyline(child_elem);
-                std::cout<<" polyline "<<std::endl;
+                map.insert({"#"+id,s});
             }
             else if(type=="line"){
+                if(child_elem->Attribute("id"))
+                    id=child_elem->Attribute("id");
                 s=parse_line(child_elem);
-                std::cout<<"line "<<std::endl;
-
+                map.insert({"#"+id,s});
             }
             else if(type=="g"){
-             //   std::cout<<cont<<std::endl;
-                std::cout<<"g"<<std::endl;
-                s= parse_group(child_elem,shapes);
-                std::cout<<"/g"<<std::endl;
-               // cont++;
-                //std::cout<<cont<<std::endl;
+                if(child_elem->Attribute("id"))
+                    id=child_elem->Attribute("id");
+                s= parse_group(child_elem,map);
+                map.insert({"#"+id,s});
+
+            }
+            else if(type=="use"){
+
+                s=parse_use(child_elem,map);
 
             }
             else {
                 std::cout << "Unrecognized shape type: " << type << std::endl;
                 continue;
             }
-           // std::cout<<"Antes Transform\n";
+
             parse_transform(s, child_elem);
-          //  std::cout<<"Depois Transform\n";
+
             shapes.push_back(s);
-         //   std::cout<<"Depois Push_back\n";
+
+
         }
     }
-    group *parse_group(XMLElement *elem, std::vector<shape *> &shapes) {
+    group *parse_group(XMLElement *elem,std::map<std::string ,shape*> &map) {
         std::vector<shape*> group_shapes;
-        parse_shapes(elem,group_shapes);
+        parse_shapes(elem,group_shapes,map);
         return new group({244,244,244},group_shapes);
     }
 
@@ -226,7 +253,8 @@ namespace svg {
         }
         XMLElement *elem = doc.RootElement();
         std::vector<shape *> shapes;
-        parse_shapes(elem, shapes);
+        std::map<std::string ,shape*> map;
+        parse_shapes(elem, shapes,map);
         int width = elem->IntAttribute("width");
         int height = elem->IntAttribute("height");
         png_image img(width, height);

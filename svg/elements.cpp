@@ -44,6 +44,9 @@ namespace svg {
     void circle::rotate(const point &origin, int degrees) {
         center = center.rotate(origin, degrees);
     }
+    shape *circle::duplicate() const {
+        return new circle(get_color(),center,radius);
+    }
             //###### POLYGON #################
 
     polygon::polygon(const svg::color &fill, const std::vector<point> &ponto) : shape(fill),pontos(ponto){}
@@ -66,6 +69,9 @@ namespace svg {
             itr=itr.rotate(origin,degrees);
         }
     }
+    shape *polygon::duplicate() const {
+        return new polygon(get_color(),pontos);
+    }
 
     //###### RECT #################
     rect::rect(const svg::color &color, const std::vector<point> &ponto) : polygon(color,ponto){}
@@ -81,6 +87,9 @@ namespace svg {
     }
     void rect::rotate(const point &origin, int degrees) {
         polygon::rotate(origin,degrees);
+    }
+    shape *rect::duplicate() const {
+        return new rect(get_color(),pontos);
     }
 
     //###### POLYLINE #################
@@ -104,6 +113,9 @@ namespace svg {
             itr=itr.rotate(origin,degrees);
         }
     }
+    shape *polyline::duplicate() const {
+        return new polyline(get_color(),points);
+    }
 
     //###### LINE #################
     line::line(const svg::color &color, const std::vector<point> &ponto): polyline(color,ponto) {
@@ -121,6 +133,9 @@ namespace svg {
     void line::rotate(const point &origin, int degrees) {
         polyline::rotate(origin,degrees);
     }
+    shape *line::duplicate() const {
+        return new line(get_color(),points);
+    }
 
     //####### GROUP ########
 
@@ -130,6 +145,7 @@ namespace svg {
     group::~group() noexcept {
         for(auto s :g)
             delete s;
+
     }
     void group::draw(png_image &img) const {
         for(auto &itr : g)
@@ -146,5 +162,11 @@ namespace svg {
     void group::rotate(const point &origin, int degrees) {
         for(auto &itr : g)
             itr->rotate(origin,degrees);
+    }
+    shape *group::duplicate() const {
+        std::vector<shape*> temp;
+        for(auto &s :g)
+            temp.push_back(s->duplicate());
+        return new group(get_color(),temp);
     }
 }
